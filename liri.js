@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+var moment = require('moment');
+moment().format();
+
 var keys = require("./keys.js");
 var axios = require("axios");
 var Spotify = require('node-spotify-api');
@@ -11,7 +14,7 @@ var term = process.argv.slice(3).join(" ");
 
 switch(action){
   case "concert-this":
-  bandsInTown(term);
+  concert(term);
   break;
 
   case "spotify-this":
@@ -95,3 +98,34 @@ function spotify(term) {
                 };
     });
   };
+
+  function concert(term){
+
+    if(!term){
+      term = "John Mayer";
+      console.log("Oops! You've left the search empty. Let's check out John Mayer is touring." + "\n")
+    };
+    
+    axios.get("https://rest.bandsintown.com/artists/" + term + "/events?app_id=codingbootcamp")
+    .then(function(response, err) {
+      
+      if (err) {
+        console.log('Error occurred: ' + err);
+        return;
+      };
+
+      var concertInfo = response.data;
+      console.log(concertInfo);
+        for(let i = 1; i < concertInfo.length; i++){
+          console.log("=============" + term +  " Concert Search Result "  + [i] + " =============" + "\n" +
+                      "Venue Name: " + concertInfo[i].venue.name + "\n" + 
+                      "Venue Location: " + concertInfo[i].venue.city + "\n" +
+                      "Concert Date & Time: " + moment(concertInfo[i].datetime).format("MM/DD/YYYY hh:mm A") + "\n" +
+                      "==============================================================" +  "\n");
+      }});
+
+      if(concertInfo = []){
+        console.log("Sorry! " + term + " does not have any shows coming up.")
+      }
+    };
+
