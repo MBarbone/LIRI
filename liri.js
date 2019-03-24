@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 var keys = require("./keys.js");
+var axios = require("axios");
 var Spotify = require('node-spotify-api');
 
 var action = process.argv[2];                     
@@ -13,12 +14,12 @@ switch(action){
   bandsInTown(term);
   break;
 
-  case "spotyify-this":
+  case "spotify-this":
   spotify(term);
   break;
 
   case "movie-this":
-  oMDB(term);
+  movie(term);
   break;
 };
 
@@ -30,7 +31,7 @@ switch(action){
 
 
 // spotify-this
-function spotify() {
+function spotify(term) {
   
   var spotify = new Spotify({
     id: process.env.SPOTIFY_ID,
@@ -61,13 +62,36 @@ function spotify() {
                       "===========================================================" +  "\n");
       }});
     };
-    spotify();
 
 
 
-  function getMovie(){
-  
 
 
+  function movie(term){
 
-  }
+    if(!term){
+      term = "School of Rock";
+      console.log("Oops! You've left the search empty. Let's check out 'School of Rock.'" + "\n")
+    };
+    
+    axios.get("http://www.omdbapi.com/?t=" + term + "&y=&plot=short&apikey=trilogy")
+    .then(function(response, err) {
+
+      var movieResponse = response.data; 
+ 
+      console.log("===========================================================" +  "\n" +
+                "Title: " + movieResponse.Title + "\n" +
+                "Release Year: " + movieResponse.Year + "\n" +
+                "IMdb Rating: " + movieResponse.Ratings[0].Value  + "\n" +
+                "Rotten Tomatoes Rating: " + movieResponse.Ratings[1].Value + "\n" +
+                "Country of Film Production: " + movieResponse.Country + "\n" +
+                "Language of Film: " + movieResponse.Language + "\n" + 
+                "Plot: " + movieResponse.Plot + "\n" +
+                "Actors: " + movieResponse.Actors);
+
+                if (err) {
+                  console.log('Error occurred: ' + err);
+                  return;
+                };
+    });
+  };
