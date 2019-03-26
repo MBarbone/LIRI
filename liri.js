@@ -107,7 +107,7 @@ function spotify(term) {
 
     if(!term){
       term = "John Mayer";
-      console.log("Oops! You've left the search empty. Let's check out John Mayer is touring." + "\n")
+      console.log("Oops! You've left the search empty. Let's check out when John Mayer is touring." + "\n")
     };
     
     axios.get("https://rest.bandsintown.com/artists/" + term + "/events?app_id=codingbootcamp")
